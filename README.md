@@ -1,18 +1,13 @@
-# THIS PROJECT IS NO LONGER MAINTAINED!
-
-I forked it purely to get it running on Clojure 1.3 and then found it didn't do what I needed anyway.
-
-If you think it might be useful to you, please fork it and maintain it yourself. If you decide to take over as lead maintainer, let me know and I'll update this readme to point to your new fork.
-
-## Other SOAP-related Clojure projects that might interest you
-
-* [soap-box](https://github.com/slipset/soap-box) -- an example of how to build a simple SOAP web service (server).
-
 # clj-soap
 
-clj-soap is SOAP server and client using Apache Axis2.
+clj-soap is a SOAP server and client using Apache Axis2.
 
-This version is updated from Tetsuya Takatsuru's version to use Clojure 1.5.1 (and modern contrib). Note however that I am not actively maintaining this library and would welcome someone taking it over. I updated Tetsuya's code to use a more modern Clojure environment purely to test it for a problem I was working on - it didn't really do what I needed so I took a different approach (using Axis 1.x libraries at a much lower level for one specific web service).
+This version is based on Sean Corfield's version, which is in turn based on
+[Tetsuya Takatsuru's version](https://bitbucket.org/taka2ru/clj-soap). It
+includes patches from a range of
+[forks](https://github.com/seancorfield/clj-soap/network) to add new
+features, options and bug fixes. Shout out to contributors for the
+@jaimeagudo, @uswitch, @j1mr10rd4n, @scttnlsn, @jpmonettas, @rentpath forks.
 
 ## Usage
 
@@ -20,16 +15,37 @@ This version is updated from Tetsuya Takatsuru's version to use Clojure 1.5.1 (a
 
 You can call remote SOAP method as following:
 ```clojure
-(require '[clj-soap.core :as soap])
+(require '[clj-soap.client :as soap])
 
-(let [client (soap/client-fn "http://... (URL for WSDL)")]
+(let [client (soap/client-fn {:wsdl "http://... (URL for WSDL)"})]
   (client :someMethod param1 param2 ...))
 ```
+
+Optional configuration data can be passed into the `client-fn` function:
+
+```clojure
+(let [client (soap/client-fn {:wsdl "http://... (URL for WSDL)"
+                              :options {:basic-auth {:username "test" :password "test"}
+                                        :timeout 10000
+                                        :chunked? true
+                                        :throw-faults false}})]
+  (client :someMethod param1 param2 ...))
+```
+
+In certain situations, Axis2 doesn't detect complex arguments. To workaround this,
+complex arguments can be manually specified:
+
+```clojure
+(let [client (soap/client-fn {:wsdl "http://... (URL for WSDL)"
+                              :options {:complex-args true}})]
+  (client :someMethod [["item" "test1"] ["item" "test2"]]))
+```
+
 ### Server
 
 To make SOAP service:
 ```clojure
-(require '[clj-soap.core :as soap])
+(require '[clj-soap.server :as soap])
 
 ;; Defining service class
 (soap/defservice my.some.SoapClass

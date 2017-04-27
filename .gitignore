@@ -1,3 +1,5 @@
 .lein-*
 /target/*
 /pom.xml*
+/.idea/
+*.iml

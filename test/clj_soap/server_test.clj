@@ -1,5 +1,6 @@
-(ns clj-soap.test.core
-  (:use [clj-soap.core])
+(ns clj-soap.server-test
+  (:use [clj-soap.server]
+        [clj-soap.client])
   (:use [clojure.test]))
 
 (def test-value (ref false))
@@ -14,7 +15,7 @@
 
 (deftest test-my-app
   (serve "jp.myclass.MyApp")
-  (let [cl (client-fn "http://localhost:6060/axis2/services/MyApp?wsdl")]
+  (let [cl (client-fn {:wsdl "http://localhost:6060/axis2/services/MyApp?wsdl"})]
     (is (= 5.0 (cl :hypotenuse 3 4)) "SOAP call with return value")
     (cl :changeval "piyopiyo")
     (is (= "piyopiyo" @test-value) "SOAP call without return value")
@@ -24,7 +25,3 @@
     ;(is (= 10.0 (cl :doubl2 5.0)))
     ;(is (= "abcabc" (cl :doubl2 "abc")))
     ))
-
-;;;; Test for exteral SOAP service
-(let [client (client-fn "http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL")]
-  (client :GetCityWeatherByZIP "16001"))
