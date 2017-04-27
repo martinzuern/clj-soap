@@ -20,21 +20,31 @@ You can call remote SOAP method as following:
 (let [client (soap/client-fn {:wsdl "http://... (URL for WSDL)"})]
   (client :someMethod param1 param2 ...))
 ```
+The response is a Clojure object representation of the response XML.
 
 Optional configuration data can be passed into the `client-fn` function:
-
 ```clojure
 (let [client (soap/client-fn {:wsdl "http://... (URL for WSDL)"
-                              :options {:basic-auth {:username "test" :password "test"}
+                              :options {; enables authentication for retrieving the WSDL
+                                        ; NB: because of Axis2 internals, this must change
+                                        ; the JVM-wide Authenticator default, so be careful!
+                                        :wsdl-auth {:username "test"
+                                                    :password "test"}
+                                        ; enables authentication for all requests
+                                        :auth {:username "test"
+                                               :password "test"}
+                                        ; specify timeout for accessing requests
                                         :timeout 10000
+                                        ; enables chunked transfer for requests
                                         :chunked? true
+                                        ; by default, SOAP failures result in exceptions
+                                        ; setting this value to false makes failures result in standard responses
                                         :throw-faults false}})]
   (client :someMethod param1 param2 ...))
 ```
 
 In certain situations, Axis2 doesn't detect complex arguments. To workaround this,
 complex arguments can be manually specified:
-
 ```clojure
 (let [client (soap/client-fn {:wsdl "http://... (URL for WSDL)"
                               :options {:complex-args true}})]

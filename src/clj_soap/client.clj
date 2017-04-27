@@ -36,13 +36,6 @@
      :type (some-> elem .getSchemaType .getName keyword)
      :elem elem}))
 
-(defn axis-op-rettype [axis-op]
-  (some-> (first (filter #(= "in" (.getDirection %))
-                         (iterator-seq (.getMessages axis-op))))
-          .getSchemaElement .getSchemaType .getParticle .getItems seq first
-          .getSchemaType .getName
-          keyword))
-
 (defmulti obj->soap-str (fn [obj argtype] argtype))
 
 (defmethod obj->soap-str :integer [obj argtype] (str obj))
@@ -115,7 +108,7 @@
        (into {})))
 
 (defn make-client
-  [url & [{:keys [basic-auth throw-faults timeout chunked?]
+  [url & [{:keys [auth throw-faults timeout chunked? wsdl-auth]
            :or {throw-faults true
                 chunked? false}}]]
   (let [options (doto (Options.)
@@ -123,18 +116,20 @@
                   (.setProperty HTTPConstants/CHUNKED (str chunked?))
                   (.setExceptionToBeThrownOnSOAPFault throw-faults))]
 
-    ; support basic auth for downloading WSDL and making SOAP requests
-    (when basic-auth
+    ; if WSDL is password-protected, must enable access for URLConnection/connect
+    ; which is used internally by Axis2
+    (when wsdl-auth
       (let [url-authenticator (proxy [Authenticator] []
                                 (getPasswordAuthentication []
-                                  (PasswordAuthentication. (:username basic-auth)
-                                                           (char-array (:password basic-auth)))))
-            req-authenticator (doto (HttpTransportPropertiesImpl$Authenticator.)
-                                (.setUsername (:username basic-auth))
-                                (.setPassword (:password basic-auth)))]
-        ; if WSDL is password-protected, must enable access for URLConnection/connect
-        ; which is used internally by Axis2
-        (Authenticator/setDefault url-authenticator)
+                                  (PasswordAuthentication. (:username wsdl-auth)
+                                                           (char-array (:password wsdl-auth)))))]
+        (Authenticator/setDefault url-authenticator)))
+
+    ; support authentication when making SOAP requests
+    (when auth
+      (let [req-authenticator (doto (HttpTransportPropertiesImpl$Authenticator.)
+                                (.setUsername (:username auth))
+                                (.setPassword (:password auth)))]
         (.setProperty options HTTPConstants/AUTHENTICATE req-authenticator)))
 
     ; enable connection timeouts
