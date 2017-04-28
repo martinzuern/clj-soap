@@ -18,16 +18,20 @@
                      PasswordAuthentication])
   )
 
-(defn axis-service-operations [axis-service]
+(defn axis-service-operations
+  [axis-service]
   (iterator-seq (.getOperations axis-service)))
 
-(defn axis-op-name [axis-op]
+(defn axis-op-name
+  [axis-op]
   (.getLocalPart (.getName axis-op)))
 
-(defn axis-op-namespace [axis-op]
+(defn axis-op-namespace
+  [axis-op]
   (.getNamespaceURI (.getName axis-op)))
 
-(defn axis-op-args [axis-op]
+(defn axis-op-args
+  [axis-op]
   (for [elem (some-> (first (filter #(= "out" (.getDirection %))
                                     (iterator-seq (.getMessages axis-op))))
                      .getSchemaElement .getSchemaType
@@ -75,7 +79,8 @@
                  (make-om-elem factory (name key) (:type argtype) val)))
     outer-element))
 
-(defn make-request [op options & args]
+(defn make-request
+  [op options & args]
   (let [factory (OMAbstractFactory/getOMFactory)
         request (.createOMElement
                   factory (QName. (axis-op-namespace op) (axis-op-name op)))
@@ -90,10 +95,14 @@
     (log/trace "Invoking SOAP Operation:" (.getName op) "Request:" request)
     request))
 
-(defn get-result [retelem]
-  (xml/parse-str (str retelem)))
+(defn get-result
+  [retelem]
+  (let [result-xml (str retelem)]
+    (log/trace "SOAP Operation Response:" result-xml)
+    (xml/parse-str result-xml)))
 
-(defn client-call [client op options & args]
+(defn client-call
+  [client op options & args]
   (let [request (apply make-request op options args)]
     (locking client
       (if (isa? (class op) OutOnlyAxisOperation)
@@ -101,7 +110,8 @@
         (get-result
           (.sendReceive client (.getName op) request))))))
 
-(defn client-proxy [client options]
+(defn client-proxy
+  [client options]
   (->> (for [op (axis-service-operations (.getAxisService client))]
          [(keyword (axis-op-name op))
           (fn soap-call [& args] (apply client-call client op options args))])
@@ -144,7 +154,12 @@
       (.setOverrideOptions options))))
 
 (defn client-fn
-  "Make SOAP client function, which is called as: (x :someMethod arg1 arg2 ...)"
+  "Creates SOAP client proxy function which must be invoked with keywordised
+  version of the SOAP function and any additional arguments
+  e.g. (client :GetData \"test1\" \"test2\").
+  A map of options are required for generating the function.
+  Either :base-client must be supplied (created with make-client) or the :wsdl
+  URL string with :options data."
   [{:keys [wsdl options base-client]}]
   (let [; either base client must be supplied or URL with optional data
         client (or base-client (make-client wsdl options))
