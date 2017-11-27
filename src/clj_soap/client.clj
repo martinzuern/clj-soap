@@ -15,8 +15,9 @@
            [javax.xml.namespace QName]
            [java.net URL
                      Authenticator
-                     PasswordAuthentication])
-  )
+                     PasswordAuthentication]
+           [java.util ArrayList]
+           [org.apache.axis2.context NamedValue]))
 
 (defn axis-service-operations
   [axis-service]
@@ -118,7 +119,7 @@
        (into {})))
 
 (defn make-client
-  [url & [{:keys [auth throw-faults timeout chunked? wsdl-auth]
+  [url & [{:keys [auth throw-faults timeout chunked? wsdl-auth headers]
            :or {throw-faults true
                 chunked? false}}]]
   (let [options (doto (Options.)
@@ -147,6 +148,13 @@
       (.setTimeOutInMilliSeconds options timeout)
       (.setProperty options HTTPConstants/SO_TIMEOUT timeout)
       (.setProperty options HTTPConstants/CONNECTION_TIMEOUT timeout))
+
+    ; enable custom headers
+    (when headers
+      (let [headers-list (ArrayList.)]
+        (doseq [[k v] headers]
+          (.add headers-list (NamedValue. (str k) (str v))))
+        (.setProperty options HTTPConstants/HTTP_HEADERS headers-list)))
 
     ; ensure all created operation clients also have the same set of options
     (doto (ServiceClient. nil (AxisService/createClientSideAxisService
