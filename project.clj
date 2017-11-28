@@ -1,4 +1,4 @@
-(defproject ie.zeto/clj-soap "0.3.1"
+(defproject ie.zeto/clj-soap "1.0.0-SNAPSHOT"
   :description "SOAP Client and Server using Apache Axis2."
   :wsdl "https://github.com/sbreatnach/clj-soap"
   :license {:name "Eclipse Public License"
