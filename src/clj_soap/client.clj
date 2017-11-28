@@ -172,7 +172,8 @@
   (let [; either base client must be supplied or URL with optional data
         client (or base-client (make-client wsdl options))
         px (client-proxy client options)]
-    (fn [opname & args]
-      (when-let [operation (px opname)]
+    (fn [method-name & args]
+      (if-let [operation (px method-name)]
         (apply operation args)
-        ))))
+        (throw (IllegalArgumentException. (str "Cannot find SOAP method '" method-name "'. "
+                                               "Available methods are: " (keys px))))))))
