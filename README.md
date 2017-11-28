@@ -2,12 +2,13 @@
 
 clj-soap is a SOAP server and client using Apache Axis2.
 
-This version is based on Sean Corfield's version, which is in turn based on
-[Tetsuya Takatsuru's version](https://bitbucket.org/taka2ru/clj-soap). It
-includes patches from a range of
-[forks](https://github.com/seancorfield/clj-soap/network) to add new
-features, options and bug fixes. Shout out to contributors for the
-@jaimeagudo, @uswitch, @j1mr10rd4n, @scttnlsn, @jpmonettas, @rentpath forks.
+This version is based on [Zeto's](https://github.com/Zeto-Ltd/clj-soap) version,
+which is based on Sean Corfield's version, which is in turn based on [Tetsuya
+Takatsuru's version](https://bitbucket.org/taka2ru/clj-soap).  
+It includes patches from a range of
+[forks](https://github.com/seancorfield/clj-soap/network) to add new features,
+options and bug fixes. Shout out to contributors for the @jaimeagudo, @uswitch,
+@j1mr10rd4n, @scttnlsn, @jpmonettas, @rentpath forks.
 
 ## Usage
 
@@ -18,8 +19,9 @@ You can call remote SOAP method as following:
 (require '[clj-soap.client :as soap])
 
 (let [client (soap/client-fn {:wsdl "http://... (URL for WSDL)"})]
-  (client :someMethod param1 param2 ...))
+  (client :someMethod {:param1 "foo", :param2 "bar", ...}))
 ```
+
 The response is a Clojure object representation of the response XML.
 
 Optional configuration data can be passed into the `client-fn` function:
@@ -38,17 +40,22 @@ Optional configuration data can be passed into the `client-fn` function:
                                         ; enables chunked transfer for requests
                                         :chunked? true
                                         ; by default, SOAP failures result in exceptions
-                                        ; setting this value to false makes failures result in standard responses
-                                        :throw-faults false}})]
-  (client :someMethod param1 param2 ...))
+                                        ; setting this value to false makes failures 
+                                        ; result in standard responses
+                                        :throw-faults false
+                                        ; headers specified here will be added 
+                                        ; to outgoing requests
+                                        :headers {"X-Api-Key" "ssshhh"}}})]
+  (client :someMethod {:param1 "foo", :param2 "bar", ...}))
 ```
 
-In certain situations, Axis2 doesn't detect complex arguments. To workaround this,
-complex arguments can be manually specified:
+In certain situations, Axis2 doesn't detect complex arguments. To workaround
+this, complex arguments can be manually specified:
+
 ```clojure
 (let [client (soap/client-fn {:wsdl "http://... (URL for WSDL)"
                               :options {:complex-args true}})]
-  (client :someMethod [["item" "test1"] ["item" "test2"]]))
+  (client :someMethod {:foo [["item" "test1"] :bar ["item" "test2"]]})
 ```
 
 ### Server
@@ -65,18 +72,17 @@ To make SOAP service:
 ;; Start SOAP Service
 (serve "my.some.SoapClass")
 ```
-`defservice` needs to be AOT-compiled.
-For example, `lein compile` before running server.
+
+`defservice` needs to be AOT-compiled. For example, `lein compile` before
+running server.
 
 #### Type Hint
 
-SOAP services need typehints.
-`String` for arguments and `void` for return value,
-if you don't specify typehints.
+SOAP services need typehints. `String` for arguments and `void` for return
+value, if you don't specify typehints.
 
 ## License
 
 Copyright (C) 2011 Tetsuya Takatsuru
 
 Distributed under the Eclipse Public License, the same as Clojure.
-
