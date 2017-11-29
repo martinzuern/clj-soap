@@ -1,18 +1,16 @@
 # clj-soap
 
-clj-soap is a SOAP server and client using Apache Axis2.
+clj-soap is a SOAP client using Apache Axis2.
 
 This version is based on [Zeto's](https://github.com/Zeto-Ltd/clj-soap) version,
-which is based on Sean Corfield's version, which is in turn based on [Tetsuya
-Takatsuru's version](https://bitbucket.org/taka2ru/clj-soap).  
+which is in turn based on Sean Corfield's and [Tetsuya
+Takatsuru's](https://bitbucket.org/taka2ru/clj-soap) version.  
 It includes patches from a range of
 [forks](https://github.com/seancorfield/clj-soap/network) to add new features,
 options and bug fixes. Shout out to contributors for the @jaimeagudo, @uswitch,
 @j1mr10rd4n, @scttnlsn, @jpmonettas, @rentpath forks.
 
 ## Usage
-
-### Client
 
 You can call remote SOAP method as following:
 ```clojure
@@ -57,29 +55,6 @@ this, complex arguments can be manually specified:
                               :options {:complex-args true}})]
   (client :someMethod {:foo [["item" "test1"] :bar ["item" "test2"]]})
 ```
-
-### Server
-
-To make SOAP service:
-```clojure
-(require '[clj-soap.server :as soap])
-
-;; Defining service class
-(soap/defservice my.some.SoapClass
-  (someMethod ^String [^Integer x ^String s]
-              (str "x is " x "\ts is " s)))
-
-;; Start SOAP Service
-(serve "my.some.SoapClass")
-```
-
-`defservice` needs to be AOT-compiled. For example, `lein compile` before
-running server.
-
-#### Type Hint
-
-SOAP services need typehints. `String` for arguments and `void` for return
-value, if you don't specify typehints.
 
 ## License
 

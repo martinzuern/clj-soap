@@ -12,6 +12,5 @@
                  [org.apache.axis2/axis2-transport-local "1.7.4"]
                  [org.apache.axis2/axis2-jaxws "1.7.4"]]
   :source-paths ["src" "test"]
-  :aot [clj-soap.server-test]
   )
 

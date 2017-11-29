@@ -7,8 +7,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [1.0.0] - 2017-11-28
-
 ### Added
 -   New option for adding headers to the outgoing request.
 -   Parameters not defined in the WSDL will be appended to the request at the
@@ -27,3 +25,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     values
 -   Fixed: Coerce timeout to integer
 -   Fixed client tests.
+
+### Removed
+-   **Breaking Change:** Dropped support for SOAP server.
