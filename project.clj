@@ -1,4 +1,4 @@
-(defproject io.xapix/clj-soap "1.0.0-SNAPSHOT"
+(defproject io.xapix/clj-soap "1.0.0"
   :description "SOAP Client using Apache Axis2."
   :url "https://gitlab.com/xapix/engineering/clj-soap"
   :license {:name "Eclipse Public License"
