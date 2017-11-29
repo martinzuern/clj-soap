@@ -177,9 +177,11 @@
 
     ;; enable connection timeouts
     (when timeout
-      (.setTimeOutInMilliSeconds options timeout)
-      (.setProperty options HTTPConstants/SO_TIMEOUT timeout)
-      (.setProperty options HTTPConstants/CONNECTION_TIMEOUT timeout))
+      (let [timeout-int (int timeout)]
+        (doto options
+          (.setTimeOutInMilliSeconds timeout-int)
+          (.setProperty HTTPConstants/SO_TIMEOUT timeout-int)
+          (.setProperty HTTPConstants/CONNECTION_TIMEOUT timeout-int))))
 
     ;; enable custom headers
     (when headers
