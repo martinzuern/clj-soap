@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.0.0] - 2017-11-29
+
 ### Added
 -   New option for adding headers to the outgoing request.
 -   Parameters not defined in the WSDL will be appended to the request at the

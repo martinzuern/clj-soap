@@ -1,8 +1,8 @@
-(defproject ie.zeto/clj-soap "1.0.0-SNAPSHOT"
-  :description "SOAP Client and Server using Apache Axis2."
-  :wsdl "https://github.com/sbreatnach/clj-soap"
+(defproject io.xapix/clj-soap "1.0.0-SNAPSHOT"
+  :description "SOAP Client using Apache Axis2."
+  :url "https://gitlab.com/xapix/engineering/clj-soap"
   :license {:name "Eclipse Public License"
-            :wsdl "http://www.eclipse.org/legal/epl-v10.html"}
+            :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/tools.logging "0.4.0"]
                  [org.clojure/data.xml "0.0.8"]
