@@ -25,4 +25,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     Added handling for maps and plain objects, throwing on arrays
 -   Fixed: When adding arbitrary objects, `setText` was called with non-string
     values
+-   Fixed: Coerce timeout to integer
 -   Fixed client tests.
