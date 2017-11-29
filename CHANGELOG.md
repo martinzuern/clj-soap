@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [1.0.0] - 2017-11-28
+## [1.0.0] - 2017-11-29
 
 ### Added
 -   New option for adding headers to the outgoing request.
@@ -27,3 +27,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     values
 -   Fixed: Coerce timeout to integer
 -   Fixed client tests.
+
+### Removed
+-   **Breaking Change:** Dropped support for SOAP server.
